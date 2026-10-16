@@ -2,7 +2,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../server/worker.js';
-import { makeD1, makeCtx, req, signInitData } from './helpers.js';
+import { makeD1, makeCtx, req, signInitData, mockFetch } from './helpers.js';
+
+// Telegram API не трогаем по-настоящему (авто-настройка вебхука)
+mockFetch([[() => true, () => ({ ok: true, result: {} })]]);
 
 const BOT = '123456:TEST-token';
 

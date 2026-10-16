@@ -13,6 +13,8 @@ import { startSync, api } from './sync.js';
 import { loadTelegram, setupTelegram } from './telegram.js';
 
 async function boot() {
+  // будит сервер: при первом запуске он сам подключит вебхук бота
+  fetch('/api/health').catch(() => {});
   const wa = await loadTelegram();
   if (wa && wa.initData) {
     setupTelegram(wa);

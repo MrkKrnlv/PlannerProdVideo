@@ -1,7 +1,7 @@
 // Интеграционный тест бота и Notion на node:sqlite с подменой Telegram, Workers AI и Notion API.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import worker, { runCron } from '../server/worker.js';
+import worker, { runCron, resetBotFlag } from '../server/worker.js';
 import { webhookSecret } from '../server/auth.js';
 import { zonedParts, addDays } from '../shared/dates.js';
 import { makeD1, makeCtx, mockFetch, req } from './helpers.js';
@@ -203,5 +203,24 @@ test('Notion: создание базы, синк по курсору, архи�
     assert.equal(r.notion.updated, 1);
     const arch = m.calls.filter((x) => x.method === 'PATCH' && x.body.archived === true);
     assert.equal(arch.length, 1);
+  } finally { m.restore(); }
+});
+
+test('вебхук ставится автоматически при первом обращении к API, один раз', async () => {
+  const m = mockFetch([
+    [TG('getMe'), () => ({ ok: true, result: { username: 'b' } })],
+    [TG(''), () => ({ ok: true, result: true })],
+  ]);
+  try {
+    const { env, ctx } = await setup();
+    resetBotFlag();
+    await worker.fetch(req('/api/health'), env, ctx);
+    await ctx.flush();
+    const wh = m.calls.filter((c) => c.url.endsWith('/setWebhook'));
+    assert.equal(wh.length, 1);
+    assert.equal(wh[0].body.url, 'https://planner.test/api/telegram/webhook');
+    await worker.fetch(req('/api/health'), env, ctx);
+    await ctx.flush();
+    assert.equal(m.calls.filter((c) => c.url.endsWith('/setWebhook')).length, 1);
   } finally { m.restore(); }
 });

@@ -1,6 +1,6 @@
 // Единый Cloudflare Worker: API, Telegram-бот, cron, статика из dist/.
 import { ensureSchema, upsertTasks, upsertItems, taskOut, itemOut, currentRev, getConfig, setConfig } from './db.js';
-import { authenticate, verifyInitData, ensureUser, isAllowed, randomKey } from './auth.js';
+import { authenticate, verifyInitData, ensureUser, isAllowed, randomKey, webhookSecret } from './auth.js';
 import { handleWebhook, setupBot, habitReminders, addTasksFromText } from './telegram.js';
 import { connectNotion, disconnectNotion, notionSync } from './notion.js';
 import { parseQuick } from '../shared/parse.js';
@@ -44,15 +44,31 @@ async function rememberOrigin(env, origin) {
   } catch { /* не критично */ }
 }
 
+// Вебхук ставится сам при первом обращении к API (и после смены адреса или токена)
+let botReadyFor = null;
+export function resetBotFlag() { botReadyFor = null; }
+async function autoSetupBot(env, origin) {
+  const mark = `${origin}|${(await webhookSecret(env.BOT_TOKEN)).slice(0, 12)}`;
+  if (botReadyFor === mark) return;
+  if ((await getConfig(env.DB, 'bot_setup')) === mark) { botReadyFor = mark; return; }
+  const r = await setupBot(env, origin);
+  if (r.ok) {
+    await setConfig(env.DB, 'bot_setup', mark);
+    await rememberOrigin(env, origin);
+    botReadyFor = mark;
+  } else console.log('auto setup failed', r.errors.join('; '));
+}
+
 async function api(request, env, ctx) {
   const url = new URL(request.url);
   const path = url.pathname.replace(/\/+$/, '');
   const method = request.method;
   const origin = env.PUBLIC_URL || url.origin;
 
-  if (path === '/api/health') return json({ ok: true, time: Date.now(), ai: !!env.AI, bot: !!env.BOT_TOKEN });
-
   await ensureSchema(env.DB);
+  if (env.BOT_TOKEN && path !== '/api/telegram/webhook') ctx.waitUntil(autoSetupBot(env, origin).catch((e) => console.log('auto setup', e && e.message)));
+
+  if (path === '/api/health') return json({ ok: true, time: Date.now(), ai: !!env.AI, bot: !!env.BOT_TOKEN });
 
   if (path === '/api/telegram/webhook' && method === 'POST') {
     await rememberOrigin(env, url.origin);
@@ -150,7 +166,9 @@ async function api(request, env, ctx) {
   if (path === '/api/telegram/setup' && method === 'POST') {
     try {
       await rememberOrigin(env, url.origin);
-      return json(await setupBot(env, origin));
+      const r = await setupBot(env, origin);
+      if (r.ok) await setConfig(env.DB, 'bot_setup', `${origin}|${(await webhookSecret(env.BOT_TOKEN)).slice(0, 12)}`);
+      return json(r);
     } catch (e) {
       return err(e.message, 400);
     }
