@@ -1,4 +1,4 @@
-name = "planner"
+name = "plannerprodvideo"
 main = "server/worker.js"
 compatibility_date = "2025-09-01"
 compatibility_flags = ["nodejs_compat"]
