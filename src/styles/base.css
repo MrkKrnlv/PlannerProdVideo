@@ -1,0 +1,146 @@
+:root {
+  --font: 'Golos Text', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --bg: #eef0f8;
+  --blob1: #a5a6ff;
+  --blob2: #ffb3d1;
+  --blob3: #93e0ee;
+  --blob4: #ffd9a8;
+  --glass: rgba(255, 255, 255, 0.58);
+  --glass-strong: rgba(250, 250, 255, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --card: rgba(255, 255, 255, 0.74);
+  --card-solid: #ffffff;
+  --card-border: rgba(255, 255, 255, 0.9);
+  --field: rgba(22, 24, 60, 0.045);
+  --field-hover: rgba(22, 24, 60, 0.08);
+  --line: rgba(22, 24, 60, 0.09);
+  --text: #17182b;
+  --text-2: #565870;
+  --text-3: #8a8ca3;
+  --accent: #5b5bd6;
+  --accent-2: #7b7bf0;
+  --accent-soft: rgba(91, 91, 214, 0.12);
+  --accent-text: #4646c0;
+  --on-accent: #ffffff;
+  --frog: #f2b200;
+  --frog-soft: rgba(242, 178, 0, 0.16);
+  --frog-text: #8a6400;
+  --good: #23a26d;
+  --good-soft: rgba(35, 162, 109, 0.13);
+  --warn: #e08a00;
+  --warn-soft: rgba(224, 138, 0, 0.14);
+  --bad: #e5484d;
+  --bad-soft: rgba(229, 72, 77, 0.12);
+  --shadow: 0 1px 2px rgba(20, 22, 60, 0.04), 0 8px 24px rgba(20, 22, 60, 0.07);
+  --shadow-lg: 0 12px 48px rgba(20, 22, 60, 0.18);
+  --r: 18px;
+  --r-s: 12px;
+  --blur: blur(22px) saturate(180%);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0c0d16;
+  --blob1: #3a3aa8;
+  --blob2: #7a2d63;
+  --blob3: #145d6e;
+  --blob4: #6b4a1c;
+  --glass: rgba(26, 27, 44, 0.55);
+  --glass-strong: rgba(28, 29, 47, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --card: rgba(30, 31, 50, 0.72);
+  --card-solid: #1c1d2e;
+  --card-border: rgba(255, 255, 255, 0.07);
+  --field: rgba(255, 255, 255, 0.06);
+  --field-hover: rgba(255, 255, 255, 0.1);
+  --line: rgba(255, 255, 255, 0.08);
+  --text: #ececf7;
+  --text-2: #a9abc6;
+  --text-3: #7a7c96;
+  --accent: #8487ff;
+  --accent-2: #9fa1ff;
+  --accent-soft: rgba(132, 135, 255, 0.16);
+  --accent-text: #a8aaff;
+  --on-accent: #0c0d16;
+  --frog: #ffc933;
+  --frog-soft: rgba(255, 201, 51, 0.14);
+  --frog-text: #ffd665;
+  --good: #3ccf8e;
+  --good-soft: rgba(60, 207, 142, 0.14);
+  --warn: #ffb224;
+  --warn-soft: rgba(255, 178, 36, 0.14);
+  --bad: #ff6369;
+  --bad-soft: rgba(255, 99, 105, 0.14);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 16px 56px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+html.lock, html.lock body { overflow: hidden; }
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; padding: 0; }
+button:disabled { cursor: default; opacity: 0.5; }
+a { color: var(--accent-text); }
+h1, h2, h3 { margin: 0; font-weight: 650; letter-spacing: -0.01em; }
+p { margin: 0; }
+.tnum { font-variant-numeric: tabular-nums; }
+.muted { color: var(--text-2); }
+.sm { font-size: 13px; }
+.nowrap { white-space: nowrap; }
+.grow { flex: 1 1 auto; min-width: 0; }
+.center { text-align: center; justify-content: center; }
+.danger { color: var(--bad); }
+.err { color: var(--bad); font-size: 13.5px; }
+.pad-s { padding: 6px 4px; }
+.row { display: flex; align-items: center; min-width: 0; }
+.row.gap { gap: 10px; }
+.row.gap-s { gap: 6px; }
+.row.wrap { flex-wrap: wrap; }
+.hint { color: var(--text-3); font-size: 12.5px; line-height: 1.45; }
+.hint.inline { font-size: 12px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+::selection { background: var(--accent-soft); }
+
+/* Фон: мягкие цветные пятна (без filter: blur — дёшево для WebView) */
+.bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: var(--bg); }
+.bg i { position: absolute; border-radius: 50%; opacity: 0.55; }
+.bg .b1 { width: 70vmax; height: 70vmax; left: -25vmax; top: -30vmax; background: radial-gradient(circle, var(--blob1) 0%, transparent 65%); }
+.bg .b2 { width: 60vmax; height: 60vmax; right: -25vmax; top: 5vmax; background: radial-gradient(circle, var(--blob2) 0%, transparent 65%); opacity: 0.45; }
+.bg .b3 { width: 65vmax; height: 65vmax; left: -15vmax; bottom: -35vmax; background: radial-gradient(circle, var(--blob3) 0%, transparent 65%); opacity: 0.45; }
+:root[data-theme='dark'] .bg i { opacity: 0.5; }
+
+/* Стекло — только навигация, шапки, шторки */
+.glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border);
+}
+.glass-strong {
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: var(--blur);
+  backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border);
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+}

@@ -1,0 +1,34 @@
+name = "planner"
+main = "server/worker.js"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+# ============================================================
+#  ВСТАВЬ СЮДА ID СВОЕЙ БАЗЫ D1 (Cloudflare → Storage & Databases → D1)
+# ============================================================
+[[d1_databases]]
+binding = "DB"
+database_name = "planner"
+database_id = "REPLACE_WITH_D1_ID"
+
+[ai]
+binding = "AI"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[observability]
+enabled = true
+
+# Секреты (Settings → Variables and Secrets, тип Secret):
+#   BOT_TOKEN   — токен бота от @BotFather
+#   SERVICE_KEY — длинная случайная строка для внешних автоматизаций
+# Необязательные переменные:
+#   ALLOWED_USERS — Telegram ID через запятую, кому разрешён доступ
+#   PUBLIC_URL    — адрес приложения, если он отличается от *.workers.dev

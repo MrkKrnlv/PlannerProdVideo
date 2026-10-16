@@ -1,0 +1,8 @@
+node_modules
+dist
+.wrangler
+.dev.vars
+screenshots/*.png
+!screenshots/README.md
+*.log
+screenshots/report.json

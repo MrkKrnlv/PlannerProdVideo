@@ -1,0 +1,24 @@
+# Локальный запуск без Workers AI (он требует токен Cloudflare даже в dev).
+# npm run dev:worker
+name = "planner-local"
+main = "server/worker.js"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "planner-local"
+database_id = "00000000-0000-0000-0000-000000000000"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[vars]
+DEV_MODE = "1"
+SERVICE_KEY = "local-service-key"
